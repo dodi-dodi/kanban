@@ -4,6 +4,7 @@ class Column {
         this.name = name || 'Nie podano nazwy';
         this.element = this.create();
     }
+
     create() {
         // NEW NODES CREATION
         let column = $('<div class="column" data-id="' + this.id + '"></div>');
@@ -27,13 +28,14 @@ class Column {
                 success: response => this.addCard(new Card(response.id, cardName))
             });
         });
-        // NEW COLUMN'S ELEMENT CREATION
+        // NEW COLUMN ELEMENT CREATION
         column.append(columnTitle)
             .append(columnDelete)
             .append(columnAddCard)
             .append(columnCardList);
         return column;
     }
+
     remove() {
         $.ajax({
             url: baseUrl + '/column/' + this.id,
@@ -41,6 +43,7 @@ class Column {
             success: () => this.element.remove(),
         });
     }
+
     addCard(card) {
         this.element.children('ul').append(card.element);
     }

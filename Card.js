@@ -1,35 +1,30 @@
-// KANBAN CARD
-function Card(id, name) {
-    var self = this;
+class Card {
+    constructor(id, name) {
+        this.id = id;
+        this.name = name || 'Nie podano nazwy';
+        this.element = this.create();
+    }
 
-    this.id = id;
-    this.name = name || 'Nie podano nazwy';
-    this.element = createCard();
+    create() {
+        let card = $('<li class="card" data-id="' + this.id + '"></li>');
+        let cardDelete = $('<button class="btn-delete">x</button>');
+        let cardDescription = $('<p class="card-description"></p>');
 
-    function createCard() {
-        var card = $('<li class="card" data-id="' + self.id + '"></li>');
-        var cardDeleteBtn = $('<button class="btn-delete">x</button>');
-        var cardDescription = $('<p class="card-description"></p>');
+        // NODE EVENTS LISTENERS
+        cardDelete.click(() => this.remove());
 
-        cardDeleteBtn.click(function(){
-            self.removeCard();
-        });
-
-        card.append(cardDeleteBtn);
-        cardDescription.text(self.name);
+        // NEW CARD ELEMENT CREATION
+        card.append(cardDelete);
+        cardDescription.text(this.name);
         card.append(cardDescription);
         return card;
     }
-}
-Card.prototype = {
-    removeCard: function() {
-        var self = this;
+
+    remove() {
         $.ajax({
-            url: baseUrl + '/card/' + self.id,
+            url: baseUrl + '/card/' + this.id,
             method: 'DELETE',
-            success: function(){
-                self.element.remove();
-            }
+            success: () => this.element.remove(),
         });
     }
-};
+}
