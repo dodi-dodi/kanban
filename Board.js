@@ -1,29 +1,27 @@
-var board = {
+const board = {
     name: 'Tablica Kanban',
-    createColumn: function(column) {
+    element: $('#board .column-container'),
+
+    createColumn: column => {
         this.element.append(column.element);
         initSortable();
     },
-    element: $('#board .column-container')
 };
 
 $('.create-column').click(function() {
-        var columnName = prompt('Wpisz nazwę kolumny');
+        let columnName = prompt('Wpisz nazwę kolumny');
         $.ajax({
             url: baseUrl + '/column',
             method: 'POST',
             data: {
                 name: columnName
             },
-            success: function(response){
-                var column = new Column(response.id, columnName);
-                board.createColumn(column);
-            }
+            success: res => board.createColumn(new Column(res.id, columnName))
         });
     });
 
 function initSortable() {
-    var cardList = $('.card-list');
+    let cardList = $('.card-list');
 
     cardList.sortable({
         connectWith: '.card-list',
@@ -31,8 +29,8 @@ function initSortable() {
     }).disableSelection();
 
     cardList.on("sortstop", function(event, ui) {
-        var $card = $(ui.item[0]);
-        var $column = $($card.closest('.column'));
+        let $card = $(ui.item[0]);
+        let $column = $($card.closest('.column'));
 
         $.ajax({
             url: baseUrl + '/card/' + $card.data('id'),
