@@ -1,5 +1,4 @@
 const baseUrl = 'https://kodilla.com/pl/bootcamp-api';
-
 $.ajaxSetup({
     headers: {
         'X-Client-Id': '1935',
@@ -7,21 +6,41 @@ $.ajaxSetup({
     }
 });
 
-$.get(baseUrl + '/board').done(function(res) {
-    setupColumns(res.columns);
-});
+class App {
+    constructor() {
+        this.board = new Board();
+    }
+    create() {
+        $('.create-column').click(() => {
+            let columnName = prompt('Wpisz nazwę kolumny');
+            $.ajax({
+                url: baseUrl + '/column',
+                method: 'POST',
+                data: {
+                    name: columnName
+                },
+                success: res => this.board.addColumn(new Column(res.id, columnName))
+            });
+        });
 
-function setupColumns(columns) {
-    columns.forEach(column => {
-        let col = new Column(column.id, column.name);
-        board.createColumn(col);
-        setupCards(col, column.cards);
-    });
+        $.get(baseUrl + '/board').done(res => this.setupColumns(res.columns));
+    }
+
+    setupColumns(columns) {
+        columns.forEach(column => {
+            let col = new Column(column.id, column.name);
+            this.board.addColumn(col);
+            this.setupCards(col, column.cards);
+        });
+    }
+
+    setupCards(col, cards) {
+        cards.forEach(card => {
+            card = new Card(card.id, card.name, card.bootcamp_kanban_column_id);
+            col.addCard(card);
+        })
+    }
 }
 
-function setupCards(col, cards) {
-    cards.forEach(card => {
-        card = new Card(card.id, card.name, card.bootcamp_kanban_column_id);
-        col.addCard(card);
-    })
-}
+const app = new App();
+app.create();
