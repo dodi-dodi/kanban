@@ -1,8 +1,10 @@
 class Column {
-    constructor(id, name) {
+    constructor(id, name = 'Nie podano nazwy') {
         this.id = id;
-        this.name = name || 'Nie podano nazwy';
+        this.name = name;
         this.element = this.create();
+        this.cardApi = new Api('/card/');
+        this.columnApi = new Api('/column/' + this.id);
     }
 
     create() {
@@ -18,15 +20,11 @@ class Column {
         columnAddCard.click(event => {
             let cardName = prompt("Wpisz nazwę karty");
             event.preventDefault();
-            $.ajax({
-                url: baseUrl + '/card',
-                method: 'POST',
-                data: {
-                    name: cardName,
-                    bootcamp_kanban_column_id: this.id
-                },
-                success: response => this.addCard(new Card(response.id, cardName))
-            });
+
+            this.cardApi.create({
+                name: cardName,
+                bootcamp_kanban_column_id: this.id
+            }, res => this.addCard(new Card(res.id, cardName)));
         });
         // NEW COLUMN ELEMENT CREATION
         column.append(columnTitle)
@@ -37,11 +35,7 @@ class Column {
     }
 
     remove() {
-        $.ajax({
-            url: baseUrl + '/column/' + this.id,
-            method: 'DELETE',
-            success: () => this.element.remove(),
-        });
+        this.columnApi.remove(() => this.element.remove());
     }
 
     addCard(card) {

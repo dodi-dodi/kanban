@@ -1,29 +1,18 @@
-const baseUrl = 'https://kodilla.com/pl/bootcamp-api';
-$.ajaxSetup({
-    headers: {
-        'X-Client-Id': '1935',
-        'X-Auth-Token': '66408993e1b309378d6d525cf413a2ed'
-    }
-});
-
 class App {
     constructor() {
         this.board = new Board();
+        this.columnApi = new Api('/column/');
+        this.boardApi = new Api('/board/');
     }
     create() {
         $('.create-column').click(() => {
             let columnName = prompt('Wpisz nazwę kolumny');
-            $.ajax({
-                url: baseUrl + '/column',
-                method: 'POST',
-                data: {
-                    name: columnName
-                },
-                success: res => this.board.addColumn(new Column(res.id, columnName))
-            });
+            this.columnApi.create({
+                name: columnName
+            }, res => this.board.addColumn(new Column(res.id, columnName)));
         });
 
-        $.get(baseUrl + '/board').done(res => this.setupColumns(res.columns));
+        this.boardApi.fetch(res => this.setupColumns(res.columns));
     }
 
     setupColumns(columns) {

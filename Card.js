@@ -1,8 +1,9 @@
 class Card {
-    constructor(id, name) {
+    constructor(id, name = 'Nie podano nazwy') {
         this.id = id;
-        this.name = name || 'Nie podano nazwy';
+        this.name = name;
         this.element = this.create();
+        this.api = new Api('/card/' + this.id);
     }
 
     create() {
@@ -21,10 +22,6 @@ class Card {
     }
 
     remove() {
-        $.ajax({
-            url: baseUrl + '/card/' + this.id,
-            method: 'DELETE',
-            success: () => this.element.remove(),
-        });
+        this.api.remove(() => this.element.remove());
     }
 }

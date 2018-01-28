@@ -19,14 +19,11 @@ class Board {
         cardList.on("sortstop", function (event, ui) {
             let $card = $(ui.item[0]);
             let $column = $($card.closest('.column'));
+            let api = new Api('/card/' + $card.data('id'));
 
-            $.ajax({
-                url: baseUrl + '/card/' + $card.data('id'),
-                method: 'PUT',
-                data: {
-                    bootcamp_kanban_column_id: $column.data('id'),
-                    name: $card.find('.card-description')[0].innerText
-                }
+            api.update({
+                bootcamp_kanban_column_id: $column.data('id'),
+                name: $card.find('.card-description')[0].innerText
             });
         });
     }
